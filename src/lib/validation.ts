@@ -102,6 +102,9 @@ export const profileStructSchema = z.object({
 
 // ========== Part2: 解析V2（プロファイル + 直近ログ） ==========
 
+// 絵文字ポリシーのスキーマ
+export const emojiPolicySchema = z.enum(['none', 'keep_user_only', 'allow_ai']);
+
 export const analyzeFormV2Schema = z.object({
   // ゲスト添削対応: プロファイルは任意（空文字OK）
   partnerProfileText: z
@@ -122,6 +125,9 @@ export const analyzeFormV2Schema = z.object({
   tone: z.enum(['polite', 'casual', 'humorous', 'auto'], {
     message: 'トーンを選択してください',
   }).default('auto'),
+  // 絵文字ポリシー
+  emojiPolicy: emojiPolicySchema.optional(),
+  userEmojiHints: z.array(z.string()).optional(),
 });
 
 export type AnalyzeFormV2Values = z.infer<typeof analyzeFormV2Schema>;

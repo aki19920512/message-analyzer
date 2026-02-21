@@ -26,9 +26,8 @@ const SCORE_TOOLTIPS: Record<string, string> = {
 };
 
 export function ScoreGrid({ scores, reasonsByMetric }: ScoreGridProps) {
-  // 安心感 = 100 - 圧力リスク（反転して表示）
-  const safetyScore = 100 - scores.pressureRisk;
-  const safetyLevel = getScoreLevel(safetyScore);
+  // pressureRisk: 低いほど良い（inverted=true）
+  const pressureLevel = getScoreLevel(scores.pressureRisk, { inverted: true });
 
   return (
     <section>
@@ -76,53 +75,54 @@ export function ScoreGrid({ scores, reasonsByMetric }: ScoreGridProps) {
           reason={reasonsByMetric?.styleMatch}
         />
 
-        {/* 安心感（圧力リスクの反転） - 2カラム幅 */}
+        {/* 圧リスク - 2カラム幅（低いほど安全） */}
         <div className="col-span-2 flex flex-col gap-3 rounded-xl bg-card p-4 shadow-sm border border-primary/5">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <MaterialIcon
-                name={safetyLevel === 'good' ? 'check_circle' : safetyLevel === 'warning' ? 'warning' : 'error'}
+                name={pressureLevel === 'good' ? 'check_circle' : pressureLevel === 'warning' ? 'warning' : 'error'}
                 size="sm"
                 className={cn(
-                  safetyLevel === 'good' && 'text-score-good',
-                  safetyLevel === 'warning' && 'text-score-warning',
-                  safetyLevel === 'danger' && 'text-score-danger'
+                  pressureLevel === 'good' && 'text-score-good',
+                  pressureLevel === 'warning' && 'text-score-warning',
+                  pressureLevel === 'danger' && 'text-score-danger'
                 )}
               />
               <p className="text-xs font-medium text-muted-foreground">
-                安心感（圧の少なさ）
+                圧リスク
               </p>
+              <span className="text-[9px] text-muted-foreground/70">（低いほど安全）</span>
               <TooltipIcon tooltip={SCORE_TOOLTIPS.pressureRisk} />
             </div>
             <div className="flex items-center gap-2">
               <span className={cn(
                 'text-[10px] font-semibold px-1.5 py-0.5 rounded',
-                getScoreLevelClasses(safetyLevel)
+                getScoreLevelClasses(pressureLevel)
               )}>
-                {getScoreLevelLabel(safetyLevel)}
+                {pressureLevel === 'good' ? '安全' : pressureLevel === 'warning' ? '注意' : '危険'}
               </span>
               <p className={cn(
                 'text-xl font-bold',
-                safetyLevel === 'good' && 'text-score-good',
-                safetyLevel === 'warning' && 'text-score-warning',
-                safetyLevel === 'danger' && 'text-score-danger'
+                pressureLevel === 'good' && 'text-score-good',
+                pressureLevel === 'warning' && 'text-score-warning',
+                pressureLevel === 'danger' && 'text-score-danger'
               )}>
-                {safetyScore}%
+                {scores.pressureRisk}
               </p>
             </div>
           </div>
-          {/* 色分けされたバー */}
-          <div className={cn('relative h-3 w-full rounded-full', getScoreBarColor(safetyLevel))}>
+          {/* 色分けされたバー（反転: 0が左=緑、100が右=赤） */}
+          <div className="relative h-3 w-full rounded-full bg-gradient-to-r from-score-good via-score-warning to-score-danger">
             {/* インジケーター */}
             <div
               className="absolute top-[-4px] h-5 w-1 bg-foreground rounded-full border-2 border-card"
-              style={{ left: `${Math.min(Math.max(safetyScore, 2), 98)}%` }}
+              style={{ left: `${Math.min(Math.max(scores.pressureRisk, 2), 98)}%` }}
             />
           </div>
           <div className="flex justify-between text-[10px] text-muted-foreground font-medium px-1">
-            <span>危険</span>
-            <span>注意</span>
             <span>安全</span>
+            <span>注意</span>
+            <span>危険</span>
           </div>
           {/* 圧力リスクの根拠 */}
           {reasonsByMetric?.pressureRisk && (

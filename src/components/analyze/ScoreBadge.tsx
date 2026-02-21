@@ -16,7 +16,7 @@ const SCORE_COLOR_MAP = {
 } as const;
 
 export function ScoreBadge({ label, description, score, inverted = false }: ScoreBadgeProps) {
-  const level = getScoreLevel(score, inverted);
+  const level = getScoreLevel(score, { inverted });
 
   return (
     <div

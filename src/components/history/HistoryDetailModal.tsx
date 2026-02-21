@@ -107,7 +107,7 @@ export function HistoryDetailModal({
           {/* スコア */}
           <div className="grid grid-cols-5 gap-2">
             {scores.map(score => {
-              const level = getScoreLevel(score.value, score.inverted);
+              const level = getScoreLevel(score.value, { inverted: score.inverted });
               return (
                 <div
                   key={score.label}

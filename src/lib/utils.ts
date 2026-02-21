@@ -5,10 +5,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getScoreLevel(score: number, inverted = false): 'good' | 'warning' | 'danger' {
-  const effective = inverted ? 100 - score : score;
-  if (effective >= 70) return 'good';
-  if (effective >= 40) return 'warning';
+/**
+ * スコアのレベルを判定する
+ * @param score 0-100のスコア
+ * @param options.inverted trueの場合、低いほど良い（pressureRisk用）
+ */
+export function getScoreLevel(
+  score: number,
+  options?: { inverted?: boolean }
+): 'good' | 'warning' | 'danger' {
+  if (options?.inverted) {
+    // pressureRisk: 低いほど良い
+    // 0-30: 緑 (good)
+    // 31-60: 黄 (warning)
+    // 61-100: 赤 (danger)
+    if (score <= 30) return 'good';
+    if (score <= 60) return 'warning';
+    return 'danger';
+  }
+  // 他スコア: 高いほど良い
+  // 71-100: 緑 (good)
+  // 41-70: 黄 (warning)
+  // 0-40: 赤 (danger)
+  if (score >= 71) return 'good';
+  if (score >= 41) return 'warning';
   return 'danger';
 }
 

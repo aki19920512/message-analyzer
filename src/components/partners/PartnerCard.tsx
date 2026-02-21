@@ -94,7 +94,7 @@ export function PartnerCard({ partner, onDelete }: PartnerCardProps) {
                   variant="outline"
                   className={cn(
                     'gap-1 px-2 py-0.5',
-                    SCORE_BADGE_MAP[getScoreLevel(partner.lastScores.warmthMatch, false)]
+                    SCORE_BADGE_MAP[getScoreLevel(partner.lastScores.warmthMatch)]
                   )}
                 >
                   <span className="text-xs opacity-70">温度感</span>
@@ -106,7 +106,7 @@ export function PartnerCard({ partner, onDelete }: PartnerCardProps) {
                   variant="outline"
                   className={cn(
                     'gap-1 px-2 py-0.5',
-                    SCORE_BADGE_MAP[getScoreLevel(partner.lastScores.pressureRisk, true)]
+                    SCORE_BADGE_MAP[getScoreLevel(partner.lastScores.pressureRisk, { inverted: true })]
                   )}
                 >
                   <span className="text-xs opacity-70">圧リスク</span>

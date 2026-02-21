@@ -14,11 +14,23 @@ import { RuleCardItem } from './RuleCardItem';
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
+  draft: string;
   retrievedRuleCards?: RetrievedRuleCard[];
 }
 
-export function ResultsDisplay({ result, retrievedRuleCards }: ResultsDisplayProps) {
+export function ResultsDisplay({ result, draft, retrievedRuleCards }: ResultsDisplayProps) {
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [draftCopied, setDraftCopied] = useState(false);
+
+  const handleCopyDraft = async () => {
+    try {
+      await navigator.clipboard.writeText(draft);
+      setDraftCopied(true);
+      setTimeout(() => setDraftCopied(false), 2000);
+    } catch {
+      // コピー失敗時は何もしない
+    }
+  };
 
   // 診断メッセージ（AIからの寄り添い総評を優先、なければフォールバック）
   const fallbackMessage = `お疲れ様です。まずはここまで向き合ってきた自分を褒めてあげてくださいね。
@@ -30,6 +42,31 @@ export function ResultsDisplay({ result, retrievedRuleCards }: ResultsDisplayPro
 
   return (
     <div className="flex flex-col gap-6">
+      {/* あなたの下書き（原文） */}
+      <section className="rounded-xl bg-muted/50 border border-border p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-muted">
+              <MaterialIcon name="edit_note" size="sm" className="text-muted-foreground" />
+            </div>
+            <span className="text-sm font-bold text-foreground">あなたの下書き</span>
+          </div>
+          <button
+            onClick={handleCopyDraft}
+            className="flex items-center gap-1 text-[11px] font-semibold text-primary uppercase tracking-tight hover:opacity-80 transition-opacity"
+          >
+            <MaterialIcon
+              name={draftCopied ? 'check' : 'content_copy'}
+              size="sm"
+            />
+            {draftCopied ? '完了' : 'コピー'}
+          </button>
+        </div>
+        <p className="text-sm text-foreground leading-relaxed">
+          {draft}
+        </p>
+      </section>
+
       {/* スコアグリッド */}
       <ScoreGrid scores={result.scores} reasonsByMetric={result.reasonsByMetric} />
 

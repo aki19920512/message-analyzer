@@ -224,7 +224,7 @@ export function AnalyzeForm() {
       {isLoading && <LoadingState />}
 
       {/* 結果表示 */}
-      {result && <ResultsDisplay result={result} />}
+      {result && <ResultsDisplay result={result} draft={form.getValues('draft')} />}
     </div>
   );
 }

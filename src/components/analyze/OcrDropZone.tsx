@@ -11,7 +11,7 @@ interface OcrDropZoneProps {
   onUseText?: () => void;
 }
 
-const MAX_FILES = 3;
+const MAX_FILES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 

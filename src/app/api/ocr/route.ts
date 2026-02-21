@@ -13,7 +13,7 @@ const ALLOWED_TYPES = new Set([
   'image/webp',
 ]);
 
-const MAX_FILES = 3;
+const MAX_FILES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 // OCRシステムプロンプト

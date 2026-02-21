@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card, CardContent } from '@/components/ui/card';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
+import { useSettings, type EmojiPolicy } from '@/hooks/useSettings';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const { settings, updateEmojiPolicy } = useSettings();
 
   return (
     <AppShell>
@@ -49,6 +51,38 @@ export default function SettingsPage() {
                   description="端末の設定に合わせる"
                   selected={theme === 'system'}
                   onClick={() => setTheme('system')}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* 絵文字設定 */}
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold text-foreground">絵文字設定</h2>
+          <Card>
+            <CardContent className="p-0">
+              <div className="divide-y">
+                <EmojiOption
+                  icon="block"
+                  label="なし"
+                  description="改善案に絵文字を使わない"
+                  selected={settings.emojiPolicy === 'none'}
+                  onClick={() => updateEmojiPolicy('none')}
+                />
+                <EmojiOption
+                  icon="person"
+                  label="ユーザーに合わせる"
+                  description="あなたの下書きにある絵文字のみ使用"
+                  selected={settings.emojiPolicy === 'keep_user_only'}
+                  onClick={() => updateEmojiPolicy('keep_user_only')}
+                />
+                <EmojiOption
+                  icon="auto_awesome"
+                  label="AI提案OK"
+                  description="AIが適切と判断した絵文字も使用"
+                  selected={settings.emojiPolicy === 'allow_ai'}
+                  onClick={() => updateEmojiPolicy('allow_ai')}
                 />
               </div>
             </CardContent>
@@ -182,5 +216,41 @@ function LinkItem({
       </div>
       <MaterialIcon name="chevron_right" className="text-muted-foreground" />
     </Link>
+  );
+}
+
+function EmojiOption({
+  icon,
+  label,
+  description,
+  selected,
+  onClick,
+}: {
+  icon: string;
+  label: string;
+  description: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center justify-between w-full p-4 text-left hover:bg-muted/50 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`flex size-10 items-center justify-center rounded-lg ${
+          selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+        }`}>
+          <MaterialIcon name={icon} />
+        </div>
+        <div>
+          <div className="font-medium text-foreground">{label}</div>
+          <div className="text-sm text-muted-foreground">{description}</div>
+        </div>
+      </div>
+      {selected && (
+        <MaterialIcon name="check_circle" filled className="text-primary" />
+      )}
+    </button>
   );
 }

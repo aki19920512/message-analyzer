@@ -20,7 +20,7 @@ export function HistoryCard({
   onView,
 }: HistoryCardProps) {
   const warmthLevel = getScoreLevel(entry.scores.warmthMatch);
-  const pressureLevel = getScoreLevel(entry.scores.pressureRisk, true);
+  const pressureLevel = getScoreLevel(entry.scores.pressureRisk, { inverted: true });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

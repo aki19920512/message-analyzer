@@ -7,6 +7,15 @@ import { toast } from 'sonner';
 import type { AnalysisResult, AnalyzeResponse, Partner, RetrievedRuleCard } from '@/types/analysis';
 import { usePartners } from '@/hooks/usePartners';
 import { useHistory } from '@/hooks/useHistory';
+import { useSettings } from '@/hooks/useSettings';
+
+// 絵文字抽出関数
+function extractEmojis(text: string): string[] {
+  // 広範な絵文字パターンをマッチ
+  const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F000}-\u{1F02F}]|[\u{1F0A0}-\u{1F0FF}]|[\u{1F100}-\u{1F1FF}]/gu;
+  const matches = text.match(emojiRegex);
+  return matches ? [...new Set(matches)] : [];
+}
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { StepIndicator } from './StepIndicator';
@@ -23,6 +32,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
   const router = useRouter();
   const { partners, getPartner, updateScores } = usePartners();
   const { addEntry } = useHistory();
+  const { settings } = useSettings();
 
   // フォーム状態
   const [selectedPartnerId, setSelectedPartnerId] = useState<string | null>(partnerId || null);
@@ -127,12 +137,17 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
       // 入力チェック完了 → 分析開始
       setLoadingStep('analyzing');
 
+      // 絵文字を抽出
+      const userEmojiHints = extractEmojis(recentLog + draft);
+
       const requestBody = {
         partnerProfileText: selectedPartner?.profileText || '',
         recentLog: recentLog.trim(),
         draft: draft.trim(),
         goal: 'auto', // 自動判定
         tone: 'auto', // 自動判定
+        emojiPolicy: settings.emojiPolicy,
+        userEmojiHints,
       };
 
       const response = await fetch('/api/analyze', {
@@ -237,7 +252,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </header>
 
         <main className="flex flex-col gap-6 p-4">
-          <ResultsDisplay result={result} retrievedRuleCards={retrievedRuleCards} />
+          <ResultsDisplay result={result} draft={draft} retrievedRuleCards={retrievedRuleCards} />
 
           {/* ゲスト添削後の保存導線 */}
           {!selectedPartner && (

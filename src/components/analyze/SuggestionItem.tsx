@@ -18,23 +18,23 @@ const LABEL_CONFIG: Record<
     displayLabel: string;
   }
 > = {
-  '丁寧': {
-    icon: 'business_center',
+  '自然': {
+    icon: 'verified',
     iconBg: 'bg-blue-50 dark:bg-blue-900/30',
     iconColor: 'text-blue-600 dark:text-blue-400',
-    displayLabel: '丁寧・フォーマル',
+    displayLabel: '自然（おすすめ）',
   },
-  'カジュアル': {
-    icon: 'mood',
-    iconBg: 'bg-green-50 dark:bg-green-900/30',
-    iconColor: 'text-green-600 dark:text-green-400',
-    displayLabel: 'カジュアル・フレンドリー',
+  '親しみ': {
+    icon: 'favorite',
+    iconBg: 'bg-pink-50 dark:bg-pink-900/30',
+    iconColor: 'text-pink-600 dark:text-pink-400',
+    displayLabel: '親しみ',
   },
-  'ユーモア': {
-    icon: 'celebration',
-    iconBg: 'bg-yellow-50 dark:bg-yellow-900/30',
-    iconColor: 'text-yellow-600 dark:text-yellow-400',
-    displayLabel: 'ユーモア・遊び心',
+  '軽い遊び心': {
+    icon: 'sentiment_satisfied',
+    iconBg: 'bg-amber-50 dark:bg-amber-900/30',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    displayLabel: '軽い遊び心',
   },
 };
 
