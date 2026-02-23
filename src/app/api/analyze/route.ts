@@ -32,7 +32,7 @@ export async function POST(
     // V2形式（プロファイル + 直近ログ）を試す
     const v2Result = analyzeFormV2Schema.safeParse(body);
     if (v2Result.success) {
-      const { partnerProfileText, recentLog, draft, goal, tone, emojiPolicy, userEmojiHints } = v2Result.data;
+      const { partnerProfileText, recentLog, draft, goal, tone, emojiPolicy, userEmojiHints, toneControls } = v2Result.data;
 
       // KB検索: goal が 'auto' の場合は汎用タグを使用
       const goalTags = goal === 'auto' ? ['casual', 'other'] : [goal];
@@ -46,7 +46,7 @@ export async function POST(
 
       // プロンプトにKBコンテキストを注入
       const kbContext = buildKbContext(scoredCards);
-      systemPrompt = buildAnalysisPromptV2(goal, tone, partnerProfileText, emojiPolicy, userEmojiHints) + kbContext;
+      systemPrompt = buildAnalysisPromptV2(goal, tone, partnerProfileText, emojiPolicy, userEmojiHints, toneControls) + kbContext;
       userContent = `【直近の会話】\n${recentLog}\n\n【送信予定文】\n${draft}`;
     } else {
       // V1形式（従来の全文ログ）を試す
@@ -89,7 +89,7 @@ export async function POST(
             json_schema: analysisJsonSchema,
           },
           temperature: 0.7,
-          max_tokens: 2000,
+          max_tokens: 2500,
         });
 
         const content = response.choices[0]?.message?.content;

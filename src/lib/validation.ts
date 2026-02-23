@@ -73,6 +73,12 @@ export const analysisResultSchema = z.object({
   // 追加: スコア別根拠と寄り添い総評
   reasonsByMetric: reasonsByMetricSchema.optional(),
   diagnosisSummary: z.string().optional(),
+  decode: z.object({
+    headline: z.string(),
+    why: z.string(),
+    avoid: z.string(),
+    next: z.string(),
+  }).optional(),
 });
 
 // ========== Part2: プロファイル作成 ==========
@@ -105,6 +111,12 @@ export const profileStructSchema = z.object({
 // 絵文字ポリシーのスキーマ
 export const emojiPolicySchema = z.enum(['none', 'keep_user_only', 'allow_ai']);
 
+// トーン調整コントロールのスキーマ
+export const toneControlsSchema = z.object({
+  distanceLevel: z.number().min(0).max(100),
+  lightnessLevel: z.number().min(0).max(100),
+});
+
 export const analyzeFormV2Schema = z.object({
   // ゲスト添削対応: プロファイルは任意（空文字OK）
   partnerProfileText: z
@@ -128,6 +140,8 @@ export const analyzeFormV2Schema = z.object({
   // 絵文字ポリシー
   emojiPolicy: emojiPolicySchema.optional(),
   userEmojiHints: z.array(z.string()).optional(),
+  // トーン調整（再提案時）
+  toneControls: toneControlsSchema.optional(),
 });
 
 export type AnalyzeFormV2Values = z.infer<typeof analyzeFormV2Schema>;

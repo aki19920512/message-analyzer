@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import type { AnalysisResult, AnalyzeResponse, Partner, RetrievedRuleCard } from '@/types/analysis';
+import type { AnalysisResult, AnalyzeResponse, Partner, RetrievedRuleCard, ToneControls } from '@/types/analysis';
 import { usePartners } from '@/hooks/usePartners';
 import { useHistory } from '@/hooks/useHistory';
 import { useSettings } from '@/hooks/useSettings';
@@ -49,6 +49,8 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [retrievedRuleCards, setRetrievedRuleCards] = useState<RetrievedRuleCard[] | undefined>(undefined);
+  const [lastRequestBody, setLastRequestBody] = useState<Record<string, unknown> | null>(null);
+  const [isReproposing, setIsReproposing] = useState(false);
 
   // AbortController for cancellation
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -150,6 +152,9 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         userEmojiHints,
       };
 
+      // 再提案用にリクエストボディを保存
+      setLastRequestBody(requestBody);
+
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -236,6 +241,38 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
     router.push('/history');
   };
 
+  // トーン調整で再提案
+  const handleRepropose = async (toneControls: ToneControls) => {
+    if (!lastRequestBody) return;
+
+    setIsReproposing(true);
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...lastRequestBody, toneControls }),
+      });
+
+      const json: AnalyzeResponse = await response.json();
+
+      if (!json.success || !json.data) {
+        throw new Error(json.error?.message || '再提案に失敗しました');
+      }
+
+      setResult(json.data);
+      if (json.retrievedRuleCards) {
+        setRetrievedRuleCards(json.retrievedRuleCards);
+      }
+      toast.success('トーンを変更して再提案しました');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '再提案に失敗しました';
+      toast.error(message);
+    } finally {
+      setIsReproposing(false);
+    }
+  };
+
   // 結果表示時
   if (result) {
     return (
@@ -252,7 +289,13 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </header>
 
         <main className="flex flex-col gap-6 p-4">
-          <ResultsDisplay result={result} draft={draft} retrievedRuleCards={retrievedRuleCards} />
+          <ResultsDisplay
+            result={result}
+            draft={draft}
+            retrievedRuleCards={retrievedRuleCards}
+            onRepropose={handleRepropose}
+            isReproposing={isReproposing}
+          />
 
           {/* ゲスト添削後の保存導線 */}
           {!selectedPartner && (

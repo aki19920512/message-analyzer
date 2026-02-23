@@ -7,18 +7,22 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
-import type { AnalysisResult, RetrievedRuleCard } from '@/types/analysis';
+import type { AnalysisResult, RetrievedRuleCard, ToneControls } from '@/types/analysis';
 import { ScoreGrid } from './ScoreGrid';
 import { SuggestionItem } from './SuggestionItem';
 import { RuleCardItem } from './RuleCardItem';
+import { DecodeCard } from './DecodeCard';
+import { ToneAdjuster } from './ToneAdjuster';
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
   draft: string;
   retrievedRuleCards?: RetrievedRuleCard[];
+  onRepropose?: (toneControls: ToneControls) => void;
+  isReproposing?: boolean;
 }
 
-export function ResultsDisplay({ result, draft, retrievedRuleCards }: ResultsDisplayProps) {
+export function ResultsDisplay({ result, draft, retrievedRuleCards, onRepropose, isReproposing = false }: ResultsDisplayProps) {
   const [rulesOpen, setRulesOpen] = useState(false);
   const [draftCopied, setDraftCopied] = useState(false);
 
@@ -42,6 +46,9 @@ export function ResultsDisplay({ result, draft, retrievedRuleCards }: ResultsDis
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Decode（次の一手） */}
+      {result.decode && <DecodeCard decode={result.decode} />}
+
       {/* あなたの下書き（原文） */}
       <section className="rounded-xl bg-muted/50 border border-border p-4">
         <div className="flex items-center justify-between mb-3">
@@ -82,6 +89,11 @@ export function ResultsDisplay({ result, draft, retrievedRuleCards }: ResultsDis
           </div>
         </div>
       </section>
+
+      {/* トーン調整スライダー */}
+      {onRepropose && (
+        <ToneAdjuster onRepropose={onRepropose} isLoading={isReproposing} />
+      )}
 
       {/* 改善パターンの提案 */}
       <section className="flex flex-col gap-4">

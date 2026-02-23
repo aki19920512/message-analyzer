@@ -56,6 +56,20 @@ export interface ReasonsByMetric {
   styleMatch: string;
 }
 
+// Decode（次の一手）
+export interface Decode {
+  headline: string;  // 1行の断言（30文字以内）
+  why: string;       // 安心理由 1-2行
+  avoid: string;     // やらない方がいいこと 1行
+  next: string;      // 次の具体アクション 1行
+}
+
+// トーン調整コントロール
+export interface ToneControls {
+  distanceLevel: number;  // 0=くだける, 100=ちゃんとしてる
+  lightnessLevel: number; // 0=真面目, 100=ほんのり軽い
+}
+
 // AI解析結果
 export interface AnalysisResult {
   profile: ProfileAnalysis;
@@ -66,6 +80,7 @@ export interface AnalysisResult {
   // 追加: スコア別根拠と寄り添い総評
   reasonsByMetric?: ReasonsByMetric;
   diagnosisSummary?: string;
+  decode?: Decode;
 }
 
 // APIリクエスト
