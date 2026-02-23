@@ -108,11 +108,32 @@ export function buildKbContext(cards: ScoredRuleCard[]): string {
   if (cards.length === 0) return '';
 
   const rules = cards
-    .map(
-      (r) =>
-        `- 避けるべき: ${r.card.anti_pattern}\n  → 改善方針: ${r.card.rewrite_policy}`
-    )
+    .map((r) => {
+      let entry = `- 避けるべき: ${r.card.anti_pattern}\n  → 改善方針: ${r.card.rewrite_policy}`;
+      if (r.card.notes && r.card.notes.length > 0) {
+        const noteStr = r.card.notes.slice(0, 2).join('、');
+        entry += `\n  補足: ${noteStr}`;
+      }
+      return entry;
+    })
     .join('\n');
 
   return `\n\n## 参考ルール（以下のパターンに注意してください）\n${rules}`;
+}
+
+/**
+ * decode フィールドを持つカードからDecode専用ヒントを生成
+ */
+export function buildDecodeKbHints(cards: ScoredRuleCard[]): string {
+  const decodeCards = cards.filter((c) => c.card.decode);
+  if (decodeCards.length === 0) return '';
+
+  const hints = decodeCards
+    .map((c) => {
+      const d = c.card.decode!;
+      return `- ${d.headline}: next=[${d.next.join(', ')}] avoid=[${d.avoid.join(', ')}]`;
+    })
+    .join('\n');
+
+  return `\n\n## Decodeヒント（以下のKB知見を参考にheadline/avoid/nextを生成）\n${hints}`;
 }

@@ -1,4 +1,4 @@
-import type { Suggestion } from '@/types/analysis';
+import type { Suggestion, Decode } from '@/types/analysis';
 
 // NGフレーズリスト
 const NG_PHRASES = [
@@ -51,6 +51,32 @@ export function validateSuggestions(suggestions: Suggestion[]): {
     const emojiMatches = text.match(emojiRegex);
     if (emojiMatches && emojiMatches.length > MAX_EMOJI_COUNT) {
       issues.push(`Too many emojis: ${emojiMatches.length}`);
+    }
+  }
+
+  return {
+    valid: issues.length === 0,
+    issues,
+  };
+}
+
+/**
+ * Decodeの品質を検証する
+ * @param decode Decodeオブジェクト（optional）
+ * @returns valid: 問題なし, issues: 検出された問題のリスト
+ */
+export function validateDecode(decode: Decode | undefined): {
+  valid: boolean;
+  issues: string[];
+} {
+  if (!decode) return { valid: true, issues: [] };
+
+  const issues: string[] = [];
+  const text = `${decode.headline} ${decode.why} ${decode.avoid} ${decode.next}`;
+
+  for (const phrase of NG_PHRASES) {
+    if (text.includes(phrase)) {
+      issues.push(`Decode NG phrase: ${phrase}`);
     }
   }
 

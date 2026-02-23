@@ -19,6 +19,16 @@ export interface RuleCard {
   rewrite_policy: string;
   good_examples: GoodExample[];
   notes: string[];
+  // 新カード向け拡張フィールド（optional）
+  tags?: string[];
+  when?: string;
+  insight?: string;
+  decode?: {
+    headline: string;
+    next: string[];
+    avoid: string[];
+  };
+  templates?: Record<string, string>;
 }
 
 export interface ScoredRuleCard {

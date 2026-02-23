@@ -4,7 +4,7 @@ import {
   analyzeFormV2Schema,
   analysisResultSchema,
 } from '@/lib/validation';
-import { validateSuggestions } from '@/lib/suggestion-validator';
+import { validateSuggestions, validateDecode } from '@/lib/suggestion-validator';
 import {
   buildAnalysisPrompt,
   buildAnalysisPromptV2,
@@ -12,8 +12,9 @@ import {
 } from '@/lib/prompts';
 import { getOpenAIClient, extractOpenAIError } from '@/lib/openai';
 import type { AnalyzeResponse, AnalysisResult, RetrievedRuleCard } from '@/types/analysis';
-import { searchRuleCards, toRetrievedRuleCard, buildKbContext } from '@/lib/kb/search';
+import { searchRuleCards, toRetrievedRuleCard, buildKbContext, buildDecodeKbHints } from '@/lib/kb/search';
 import type { SearchParams } from '@/lib/kb/search';
+import { detectDraftRisks } from '@/lib/draft-risk-detector';
 
 export async function POST(
   request: NextRequest
@@ -34,19 +35,36 @@ export async function POST(
     if (v2Result.success) {
       const { partnerProfileText, recentLog, draft, goal, tone, emojiPolicy, userEmojiHints, toneControls } = v2Result.data;
 
-      // KB検索: goal が 'auto' の場合は汎用タグを使用
+      // 下書きリスク検出
+      const draftRisks = detectDraftRisks(draft);
+      const detectedRiskTags = draftRisks.map((r) => r.tag);
+
+      // KB検索: goal が 'auto' の場合は汎用タグを使用、riskTags にリスク検出結果を注入
       const goalTags = goal === 'auto' ? ['casual', 'other'] : [goal];
       const searchParams: SearchParams = {
         goalTags,
         sceneTags: [],
-        riskTags: [],
+        riskTags: detectedRiskTags,
       };
       const scoredCards = searchRuleCards(searchParams, 5);
       retrievedRuleCards = scoredCards.map(toRetrievedRuleCard);
 
-      // プロンプトにKBコンテキストを注入
+      // KBコンテキスト生成
       const kbContext = buildKbContext(scoredCards);
-      systemPrompt = buildAnalysisPromptV2(goal, tone, partnerProfileText, emojiPolicy, userEmojiHints, toneControls) + kbContext;
+      const decodeKbHints = buildDecodeKbHints(scoredCards);
+
+      // リスク警告文生成
+      let draftRiskWarnings = '';
+      if (draftRisks.length > 0) {
+        const lines = draftRisks.map((r) => `- ${r.label}: 「${r.matched}」`).join('\n');
+        draftRiskWarnings = `\n\n## ⚠ 下書きリスク検出\n以下のリスクが検出されました。Decodeのavoidに必ず反映し、suggestionsでも回避してください:\n${lines}`;
+      }
+
+      // プロンプト組み立て（KB情報は関数内部で適切な位置に配置）
+      systemPrompt = buildAnalysisPromptV2(
+        goal, tone, partnerProfileText, emojiPolicy, userEmojiHints, toneControls,
+        kbContext, decodeKbHints, draftRiskWarnings
+      );
       userContent = `【直近の会話】\n${recentLog}\n\n【送信予定文】\n${draft}`;
     } else {
       // V1形式（従来の全文ログ）を試す
@@ -110,8 +128,10 @@ export async function POST(
 
         // 品質ガード: NGフレーズ検出時は再生成
         const qualityCheck = validateSuggestions(analysisData.suggestions);
-        if (!qualityCheck.valid && retryCount < maxRetries) {
-          console.log('[Analyze] NG detected, retrying...', qualityCheck.issues.length, 'issues');
+        const decodeCheck = validateDecode(analysisData.decode);
+        const allIssues = [...qualityCheck.issues, ...decodeCheck.issues];
+        if (allIssues.length > 0 && retryCount < maxRetries) {
+          console.log('[Analyze] NG detected, retrying...', allIssues.length, 'issues');
           retryCount++;
           continue;
         }
