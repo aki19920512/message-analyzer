@@ -10,7 +10,7 @@ export function Footer({ className }: FooterProps) {
     <footer className={cn('border-t mt-auto', className)}>
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>&copy; 2025 MessageCoach</p>
+          <p>&copy; 2025 オクルン</p>
           <nav className="flex gap-4">
             <Link href="/privacy" className="hover:text-foreground transition-colors">
               プライバシーポリシー

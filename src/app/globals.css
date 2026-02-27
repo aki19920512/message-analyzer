@@ -50,6 +50,13 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  /* オクルン ブランドカラー */
+  --color-brand: #F472B6;
+  --color-brand-light: #FFF1F5;
+  --color-brand-dark: #DB2777;
+  --color-surface: #FFFBF7;
+  /* Zen Maru Gothic */
+  --font-zen: var(--font-zen);
 }
 
 :root {
@@ -234,3 +241,37 @@
     padding-bottom: 2rem;
   }
 }
+
+/* ── オクルン LP ── */
+.hero-gradient {
+  background: linear-gradient(135deg, #fff1f5 0%, #fce7f3 40%, #ffe4e6 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(244, 114, 182, 0.15);
+  border-radius: 1.5rem;
+}
+
+.dropzone-border {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23F472B6' stroke-width='2' stroke-dasharray='8%2c 6' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+  border-radius: 1rem;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(5deg); }
+}
+
+@keyframes float-alt {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-5deg); }
+}
+
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-float-alt { animation: float-alt 5s ease-in-out infinite; }
+
+details.faq-item summary { list-style: none; cursor: pointer; }
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item[open] .faq-arrow { transform: rotate(180deg); }

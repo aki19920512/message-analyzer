@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Zen_Maru_Gothic } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -13,9 +13,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const zenMaru = Zen_Maru_Gothic({
+  variable: "--font-zen",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "MessageCoach",
-  description: "送る前に整える。相手を尊重したコミュニケーションのための添削",
+  title: "オクルン — 送る前にチェック",
+  description: "送信前のメッセージをAIが分析。温度感・圧力を可視化して3パターンの改善案を提案。",
 };
 
 export default function RootLayout({
@@ -32,7 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${zenMaru.variable} antialiased`}
       >
         {children}
         <Toaster />

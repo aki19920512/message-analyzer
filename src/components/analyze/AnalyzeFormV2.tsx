@@ -68,6 +68,24 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
     }
   }, [partnerId]);
 
+  // LP からの localStorage ハンドオフを読み込む（Strict Mode 対応: ref ガードで1回のみ実行）
+  const hasReadLpDraft = useRef(false);
+  useEffect(() => {
+    if (hasReadLpDraft.current) return;
+    hasReadLpDraft.current = true;
+
+    const savedDraft = localStorage.getItem('okurun_draft');
+    if (savedDraft) {
+      setDraft(savedDraft);
+      localStorage.removeItem('okurun_draft');
+    }
+    // スクリーンショットデータは受け取ったあと削除（OCR は手動実行）
+    if (localStorage.getItem('okurun_screenshot_data')) {
+      localStorage.removeItem('okurun_screenshot_data');
+      localStorage.removeItem('okurun_screenshot');
+    }
+  }, []);
+
   // OCRファイル処理
   const handleOcrFiles = async (files: File[]) => {
     setOcrProcessing(true);

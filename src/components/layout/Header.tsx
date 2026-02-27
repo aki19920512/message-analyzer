@@ -18,11 +18,13 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <MaterialIcon name="chat_bubble" size="sm" filled />
+          <div className="flex size-8 items-center justify-center rounded-lg text-white" style={{ background: '#F472B6' }}>
+            <MaterialIcon name="favorite" size="sm" filled />
           </div>
-          <span className="font-semibold text-lg group-hover:text-primary transition-colors">
-            MessageCoach
+          <span className="font-semibold text-lg transition-colors" style={{ color: 'inherit' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#F472B6')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '')}>
+            オクルン
           </span>
         </Link>
 
@@ -41,7 +43,7 @@ export function Header() {
           className="flex md:hidden items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <MaterialIcon name="edit" size="sm" />
-          添削
+          オクルンする
         </Link>
       </div>
     </header>
