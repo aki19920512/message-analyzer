@@ -230,12 +230,12 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: 'MessageCoach - 分析結果',
+          title: 'オクルン - チェック結果',
           text: `温度感: ${result.scores.warmthMatch}点\n明確さ: ${result.scores.clarity}点\n誠実さ: ${result.scores.sincerity}点`,
         });
       } else {
         // フォールバック: クリップボードにコピー
-        const shareText = `【MessageCoach 分析結果】\n温度感: ${result.scores.warmthMatch}点\n明確さ: ${result.scores.clarity}点\n誠実さ: ${result.scores.sincerity}点`;
+        const shareText = `【オクルン チェック結果】\n温度感: ${result.scores.warmthMatch}点\n明確さ: ${result.scores.clarity}点\n誠実さ: ${result.scores.sincerity}点`;
         await navigator.clipboard.writeText(shareText);
         toast.success('結果をコピーしました');
       }
@@ -303,7 +303,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
           >
             <MaterialIcon name="arrow_back" />
           </button>
-          <h1 className="flex-1 text-center text-lg font-bold tracking-tight pr-10">分析完了</h1>
+          <h1 className="flex-1 text-center text-lg font-bold tracking-tight pr-10">チェック完了 ✨</h1>
         </header>
 
         <main className="flex flex-col gap-6 p-4">
@@ -339,7 +339,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-primary-foreground font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
           >
             <MaterialIcon name="history" />
-            履歴に保存する
+            保存する 💾
           </button>
           <button
             onClick={handleShare}
@@ -360,7 +360,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
     return (
       <div className="max-w-md mx-auto min-h-screen flex flex-col bg-card">
         <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-md border-b border-border p-4 flex items-center justify-center">
-          <h1 className="text-lg font-bold tracking-tight">分析中...</h1>
+          <h1 className="text-lg font-bold tracking-tight">チェック中...</h1>
         </header>
         <main className="flex-1 overflow-y-auto p-4">
           <LoadingState currentStep={loadingStep} onCancel={handleCancel} />
@@ -379,7 +379,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         >
           <MaterialIcon name="arrow_back" className="text-muted-foreground" />
         </button>
-        <h1 className="text-lg font-bold tracking-tight">会話を分析</h1>
+        <h1 className="text-lg font-bold tracking-tight">メッセージをチェック</h1>
         <Link
           href="/guide"
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
@@ -396,7 +396,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              1. 相手を選ぶ
+              1. 誰に送る？
             </h2>
             <MaterialIcon
               name="info"
@@ -416,7 +416,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              2. 会話の履歴
+              2. やり取りの流れ
             </h2>
           </div>
           <OcrDropZone
@@ -431,7 +431,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              3. 直近のメッセージ（任意）
+              3. 最近のやり取り（あれば）
             </h2>
           </div>
           <div className="relative">
@@ -449,14 +449,14 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              4. あなたの下書き
+              4. 送りたいメッセージ
             </h2>
           </div>
           <div className="relative">
             <textarea
               value={draft}
               onChange={(e) => setDraft(e.target.value.slice(0, 500))}
-              placeholder="ここに送信予定のメッセージを入力してください..."
+              placeholder="ここに下書きを入力してね..."
               rows={5}
               className="w-full bg-muted border-2 border-transparent rounded-xl p-4 text-sm focus:border-primary/50 focus:ring-0 placeholder:text-muted-foreground/60 transition-all resize-none font-medium"
             />
@@ -481,10 +481,10 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         <button
           onClick={handleSubmit}
           disabled={isLoading || !draft.trim()}
-          className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-primary-foreground font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+          className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-primary-foreground font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
         >
           <MaterialIcon name="auto_awesome" size="sm" />
-          メッセージを分析する
+          オクルンする 💌
         </button>
       </div>
     </div>

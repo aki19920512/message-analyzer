@@ -13,9 +13,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/', icon: 'home', label: 'ホーム' },
-  { href: '/history', icon: 'history', label: '履歴' },
-  { href: '/partners', icon: 'group', label: '相手' },
-  { href: '/settings', icon: 'settings', label: '設定' },
+  { href: '/history', icon: 'history', label: 'きろく' },
+  { href: '/partners', icon: 'group', label: '相手リスト' },
+  { href: '/settings', icon: 'settings', label: 'せってい' },
 ];
 
 export function BottomNavigation() {

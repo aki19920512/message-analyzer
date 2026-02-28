@@ -376,7 +376,7 @@ export function ProfileForm({ existingPartner }: ProfileFormProps) {
                 </div>
                 <div className="w-full bg-muted rounded-full h-1.5">
                   <div
-                    className="bg-primary h-1.5 rounded-full shadow-[0_0_8px_rgba(25,212,230,0.5)] transition-all"
+                    className="bg-primary h-1.5 rounded-full shadow-[0_0_8px_rgba(244,114,182,0.5)] transition-all"
                     style={{ width: `${ocrProgress}%` }}
                   />
                 </div>
@@ -433,7 +433,7 @@ export function ProfileForm({ existingPartner }: ProfileFormProps) {
               <MaterialIcon name="bolt" size="sm" />
               Powered by OpenAI
             </p>
-            <p className="text-[10px] text-muted-foreground/70">© 2025 MessageCoach</p>
+            <p className="text-[10px] text-muted-foreground/70">© 2025 オクルン</p>
           </div>
         </footer>
       </main>

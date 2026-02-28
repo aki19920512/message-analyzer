@@ -14,8 +14,8 @@ interface LoadingStateProps {
 
 const STEPS: { key: LoadingStep; label: string; icon: string }[] = [
   { key: 'validating', label: '入力チェック', icon: 'checklist' },
-  { key: 'analyzing', label: 'AIが分析中', icon: 'psychology' },
-  { key: 'formatting', label: '結果整形', icon: 'format_list_bulleted' },
+  { key: 'analyzing', label: 'AIがチェック中', icon: 'psychology' },
+  { key: 'formatting', label: '結果をまとめ中', icon: 'format_list_bulleted' },
 ];
 
 export function LoadingState({ currentStep = 'analyzing', onCancel }: LoadingStateProps) {
