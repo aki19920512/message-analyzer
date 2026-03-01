@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +24,39 @@ export function OcrDropZone({
 }: OcrDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // iOS フォールバック: 写真ライブラリから戻った時に onChange が消失するケースに対応
+  useEffect(() => {
+    onDebugLog?.('OcrDropZone mounted');
+
+    const handleFocus = () => {
+      setTimeout(() => {
+        const fileCount = inputRef.current?.files?.length ?? 0;
+        onDebugLog?.(`focus/visibility: files=${fileCount}`);
+        if (inputRef.current && inputRef.current.files && inputRef.current.files.length > 0) {
+          onDebugLog?.('focus fallback: triggering handleFileChange');
+          const syntheticEvent = { target: inputRef.current } as unknown as React.ChangeEvent<HTMLInputElement>;
+          handleFileChange(syntheticEvent);
+        }
+      }, 500);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        handleFocus();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const validateFiles = (files: File[]): File[] => {
     setError(null);
@@ -112,6 +145,7 @@ export function OcrDropZone({
             <div className="relative rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors cursor-pointer">
               再読込
               <input
+                ref={inputRef}
                 type="file"
                 accept="image/*"
                 multiple
@@ -175,6 +209,7 @@ export function OcrDropZone({
 
             {/* 透明inputを全面に被せる（iOS Safari 対応） */}
             <input
+              ref={inputRef}
               type="file"
               accept="image/*"
               multiple
