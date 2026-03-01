@@ -424,7 +424,7 @@ export default function HomePage() {
         {/* ── フッターリンク ── */}
         <section className="bg-white border-t py-10" style={{ borderColor: 'rgba(244,114,182,0.15)' }}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <div className="grid grid-cols-3 gap-8 text-sm">
+            <div className="grid grid-cols-2 gap-8 text-sm">
               {/* 1列目: オクルンについて */}
               <div>
                 <h3 className="font-bold text-gray-900 mb-3">オクルンについて</h3>
@@ -434,22 +434,13 @@ export default function HomePage() {
                   <li><a href="/pricing" className="hover:text-pink-500 transition-colors">料金</a></li>
                 </ul>
               </div>
-              {/* 2列目: サポート */}
-              <div>
-                <h3 className="font-bold text-gray-900 mb-3">サポート</h3>
-                <ul className="space-y-2 text-gray-500">
-                  <li><a href="/guide#faq" className="hover:text-pink-500 transition-colors">よくある質問</a></li>
-                  <li><a href="/contact" className="hover:text-pink-500 transition-colors">お問い合わせ</a></li>
-                  <li><a href="/legal" className="hover:text-pink-500 transition-colors">特商法</a></li>
-                </ul>
-              </div>
-              {/* 3列目: リーガル */}
+              {/* 2列目: リーガル（よくある質問を統合） */}
               <div>
                 <h3 className="font-bold text-gray-900 mb-3">リーガル</h3>
                 <ul className="space-y-2 text-gray-500">
+                  <li><a href="/guide#faq" className="hover:text-pink-500 transition-colors">よくある質問</a></li>
                   <li><a href="/terms" className="hover:text-pink-500 transition-colors">利用規約</a></li>
                   <li><a href="/privacy" className="hover:text-pink-500 transition-colors">プライバシー</a></li>
-                  <li><a href="/refund" className="hover:text-pink-500 transition-colors">返金ポリシー</a></li>
                 </ul>
               </div>
             </div>
