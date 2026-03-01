@@ -163,7 +163,7 @@ export function OcrDropZone({
               </div>
               <div>
                 <p className="font-bold text-foreground">
-                  スクショをアップ
+                  スクショをアップ（v3）
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   AIが実際のチャットから雰囲気を読み取り、
