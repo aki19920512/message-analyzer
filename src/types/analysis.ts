@@ -43,7 +43,7 @@ export interface Scores {
 
 // 提案
 export interface Suggestion {
-  label: string;  // 丁寧/カジュアル/ユーモア
+  label: string;  // 自然（おすすめ）/親しみ/軽い遊び心
   text: string;   // 改善案テキスト
 }
 

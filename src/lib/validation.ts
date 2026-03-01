@@ -67,7 +67,7 @@ export const analysisResultSchema = z.object({
       label: z.string(),
       text: z.string(),
     })
-  ),
+  ).min(3).max(3),
   reasons: z.array(z.string()),
   nextStep: z.string(),
   // 追加: スコア別根拠と寄り添い総評

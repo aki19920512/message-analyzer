@@ -123,6 +123,8 @@ export const analysisJsonSchema = {
       },
       suggestions: {
         type: 'array',
+        minItems: 3,
+        maxItems: 3,
         items: {
           type: 'object',
           properties: {
