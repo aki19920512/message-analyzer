@@ -496,7 +496,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
       </main>
 
       {/* Fixed Bottom Action */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-card via-card/95 to-transparent">
+      <div className="absolute bottom-16 md:bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-card via-card/95 to-transparent">
         <button
           onClick={handleSubmit}
           disabled={isLoading || !draft.trim()}
