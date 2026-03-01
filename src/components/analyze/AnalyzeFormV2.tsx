@@ -42,6 +42,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
   // OCR状態
   const [ocrProcessing, setOcrProcessing] = useState(false);
   const [ocrText, setOcrText] = useState<string | undefined>(undefined);
+  const ocrAbortRef = useRef<AbortController | null>(null);
 
   // 送信状態
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +89,11 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
 
   // OCRファイル処理
   const handleOcrFiles = async (files: File[]) => {
+    // 前回のリクエストが残っていればキャンセル
+    ocrAbortRef.current?.abort();
+    const controller = new AbortController();
+    ocrAbortRef.current = controller;
+
     setOcrProcessing(true);
     setOcrText(undefined);
 
@@ -100,6 +106,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
       const response = await fetch('/api/ocr', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       });
 
       const json = await response.json();
@@ -114,10 +121,13 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         toast.warning(json.data.warnings[0]);
       }
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
       const message = err instanceof Error ? err.message : 'OCR処理に失敗しました';
       toast.error(message);
     } finally {
-      setOcrProcessing(false);
+      if (!controller.signal.aborted) {
+        setOcrProcessing(false);
+      }
     }
   };
 
