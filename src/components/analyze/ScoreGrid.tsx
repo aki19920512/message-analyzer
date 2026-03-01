@@ -182,7 +182,7 @@ function ScoreCard({
       </div>
       {/* 根拠表示 */}
       {reason && (
-        <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+        <p className="text-[10px] text-muted-foreground mt-1">
           {reason}
         </p>
       )}

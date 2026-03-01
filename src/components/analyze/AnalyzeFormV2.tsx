@@ -343,19 +343,28 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </main>
 
         {/* Fixed Footer Actions */}
-        <footer className="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-background p-4 border-t border-border flex gap-3">
+        <footer className="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-background p-4 border-t border-border space-y-2">
+          <div className="flex gap-3">
+            <button
+              onClick={handleSaveToHistory}
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-primary-foreground font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
+            >
+              <MaterialIcon name="history" />
+              保存する 💾
+            </button>
+            <button
+              onClick={handleShare}
+              className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+            >
+              <MaterialIcon name="share" />
+            </button>
+          </div>
           <button
-            onClick={handleSaveToHistory}
-            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-primary-foreground font-bold shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
+            onClick={() => setResult(null)}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-medium text-muted-foreground hover:bg-muted/50 active:scale-[0.98] transition-all"
           >
-            <MaterialIcon name="history" />
-            保存する 💾
-          </button>
-          <button
-            onClick={handleShare}
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-          >
-            <MaterialIcon name="share" />
+            <MaterialIcon name="edit" size="sm" />
+            別のメッセージを試す
           </button>
         </footer>
 
