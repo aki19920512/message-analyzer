@@ -304,7 +304,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
   // 結果表示時
   if (result) {
     return (
-      <div className="relative flex min-h-screen w-full max-w-md mx-auto flex-col bg-background pb-24">
+      <div className="relative flex min-h-screen w-full max-w-md mx-auto flex-col bg-background pb-40">
         {/* Header */}
         <header className="sticky top-0 z-10 flex items-center bg-background/80 backdrop-blur-md p-4 border-b border-primary/10">
           <button
@@ -343,7 +343,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </main>
 
         {/* Fixed Footer Actions */}
-        <footer className="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-background p-4 border-t border-border space-y-2">
+        <footer className="fixed bottom-16 md:bottom-0 left-0 right-0 mx-auto max-w-md bg-background p-4 border-t border-border space-y-2">
           <div className="flex gap-3">
             <button
               onClick={handleSaveToHistory}
@@ -369,7 +369,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </footer>
 
         {/* Bottom accent bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-0 h-2 bg-primary/20" />
+        <div className="fixed bottom-16 md:bottom-0 left-0 right-0 z-0 h-2 bg-primary/20" />
       </div>
     );
   }
@@ -407,7 +407,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         </Link>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 space-y-8 pb-24">
+      <main className="flex-1 overflow-y-auto p-4 space-y-8 pb-40">
         {/* Step Indicators */}
         <StepIndicator currentStep={currentStep} totalSteps={4} />
 
