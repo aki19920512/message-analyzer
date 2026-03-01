@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +22,6 @@ export function OcrDropZone({
   onUseText,
   onDebugLog,
 }: OcrDropZoneProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,14 +51,6 @@ export function OcrDropZone({
     }
 
     return valid;
-  };
-
-  const handleClick = () => {
-    onDebugLog?.('handleClick fired');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,14 +87,15 @@ export function OcrDropZone({
 
   return (
     <div className="space-y-2">
-      {/* 共通の hidden file input — 常に DOM に存在させ ref を安定化 */}
+      {/* 共通の hidden file input — label 経由でトリガー（iOS Safari 対応） */}
       <input
-        ref={fileInputRef}
+        id="ocr-file-input"
         type="file"
         accept="image/*"
         multiple
         onChange={handleFileChange}
-        className="hidden"
+        onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+        className="sr-only"
       />
 
       {ocrText ? (
@@ -128,13 +120,12 @@ export function OcrDropZone({
             >
               このテキストを使う
             </button>
-            <button
-              type="button"
-              onClick={handleClick}
-              className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+            <label
+              htmlFor="ocr-file-input"
+              className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
             >
               再読込
-            </button>
+            </label>
           </div>
         </div>
       ) : isProcessing ? (
@@ -156,13 +147,13 @@ export function OcrDropZone({
       ) : (
         /* 初期アップロードゾーン */
         <>
-          <div
-            onClick={handleClick}
+          <label
+            htmlFor="ocr-file-input"
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             className={cn(
-              'group relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer',
+              'group relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer block',
               isDragging
                 ? 'border-primary bg-primary/10'
                 : 'border-muted-foreground/20 hover:border-primary/50 hover:bg-primary/5'
@@ -188,7 +179,7 @@ export function OcrDropZone({
                 </p>
               </div>
             </div>
-          </div>
+          </label>
           {error && (
             <p className="text-xs text-destructive flex items-center gap-1">
               <MaterialIcon name="error" size="sm" className="text-[14px]" />
