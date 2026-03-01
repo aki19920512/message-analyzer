@@ -351,8 +351,71 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── 料金プラン ── */}
+        <section id="pricing" className="py-12 sm:py-16" style={{ background: '#FFF1F5' }}>
+          <div className="mx-auto max-w-3xl px-4">
+            <div className="text-center mb-10">
+              <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#F472B6' }}>
+                Pricing
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                料金プラン
+              </h2>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* おためしプラン */}
+              <div className="rounded-2xl bg-white p-6 shadow-sm text-center">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">おためし</h3>
+                <p className="text-xs text-gray-500 mb-4">まずは気軽に試してみよう</p>
+                <div className="mb-4">
+                  <span className="text-3xl font-bold text-gray-900">¥0</span>
+                  <span className="text-sm text-gray-500"> / 月</span>
+                </div>
+                <ul className="text-sm text-gray-600 text-left space-y-2 mb-6">
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> 1日3回までチェック</li>
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> 温度感スコア表示</li>
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> 改善メッセージ提案</li>
+                </ul>
+                <a
+                  href="/submit?mode=analyze"
+                  className="block w-full rounded-full py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-105"
+                  style={{ background: 'linear-gradient(135deg, #F472B6 0%, #DB2777 100%)' }}
+                >
+                  無料ではじめる
+                </a>
+              </div>
+              {/* プラスプラン */}
+              <div className="rounded-2xl bg-white p-6 shadow-sm text-center relative" style={{ border: '2px solid #F472B6' }}>
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-xs font-bold text-white"
+                  style={{ background: 'linear-gradient(135deg, #F472B6 0%, #DB2777 100%)' }}>
+                  おすすめ
+                </span>
+                <h3 className="text-lg font-bold text-gray-900 mb-1 mt-2">プラス</h3>
+                <p className="text-xs text-gray-500 mb-4">もっと使いこなしたい人へ</p>
+                <div className="mb-4">
+                  <span className="text-3xl font-bold text-gray-900">¥980</span>
+                  <span className="text-sm text-gray-500"> / 月</span>
+                </div>
+                <ul className="text-sm text-gray-600 text-left space-y-2 mb-6">
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> チェック回数 無制限</li>
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> 相手プロフィール登録</li>
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> 履歴保存・振り返り</li>
+                  <li className="flex items-center gap-2"><span style={{ color: '#F472B6' }}>✓</span> トーン調整スライダー</li>
+                </ul>
+                <p className="text-xs text-slate-400 text-center mb-3">※ プラスプランは近日公開予定です</p>
+                <button
+                  disabled
+                  className="block w-full rounded-full py-3 text-sm font-bold bg-gray-300 text-gray-500 cursor-not-allowed"
+                >
+                  もうすぐリリース ✨
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── FAQ ── */}
-        <section className="py-12 sm:py-16" style={{ background: '#FFFBF7' }}>
+        <section id="faq" className="py-12 sm:py-16" style={{ background: '#FFFBF7' }}>
           <div className="mx-auto max-w-2xl px-4">
             <div className="text-center mb-8">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">よくある質問</h2>
