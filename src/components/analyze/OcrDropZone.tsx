@@ -87,17 +87,6 @@ export function OcrDropZone({
 
   return (
     <div className="space-y-2">
-      {/* 共通の hidden file input — label 経由でトリガー（iOS Safari 対応） */}
-      <input
-        id="ocr-file-input"
-        type="file"
-        accept="image/*"
-        multiple
-        onChange={handleFileChange}
-        onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
-        className="sr-only"
-      />
-
       {ocrText ? (
         /* OCR結果がある場合 */
         <div className="space-y-3">
@@ -120,12 +109,17 @@ export function OcrDropZone({
             >
               このテキストを使う
             </button>
-            <label
-              htmlFor="ocr-file-input"
-              className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
-            >
+            <div className="relative rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors cursor-pointer">
               再読込
-            </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+            </div>
           </div>
         </div>
       ) : isProcessing ? (
@@ -147,13 +141,12 @@ export function OcrDropZone({
       ) : (
         /* 初期アップロードゾーン */
         <>
-          <label
-            htmlFor="ocr-file-input"
+          <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             className={cn(
-              'group relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer block',
+              'group relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer',
               isDragging
                 ? 'border-primary bg-primary/10'
                 : 'border-muted-foreground/20 hover:border-primary/50 hover:bg-primary/5'
@@ -179,7 +172,17 @@ export function OcrDropZone({
                 </p>
               </div>
             </div>
-          </label>
+
+            {/* 透明inputを全面に被せる（iOS Safari 対応） */}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            />
+          </div>
           {error && (
             <p className="text-xs text-destructive flex items-center gap-1">
               <MaterialIcon name="error" size="sm" className="text-[14px]" />
