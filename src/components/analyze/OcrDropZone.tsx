@@ -13,7 +13,6 @@ interface OcrDropZoneProps {
 
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 export function OcrDropZone({
   onFilesSelected,
@@ -30,8 +29,8 @@ export function OcrDropZone({
     const valid: File[] = [];
 
     for (const file of files) {
-      if (!ACCEPTED_TYPES.includes(file.type)) {
-        setError('PNG、JPG、WEBPのみ対応しています');
+      if (!file.type.startsWith('image/')) {
+        setError('画像ファイルのみ対応しています');
         continue;
       }
       if (file.size > MAX_FILE_SIZE) {
@@ -91,7 +90,7 @@ export function OcrDropZone({
       <input
         ref={fileInputRef}
         type="file"
-        accept={ACCEPTED_TYPES.join(',')}
+        accept="image/*"
         multiple
         onChange={handleFileChange}
         className="hidden"

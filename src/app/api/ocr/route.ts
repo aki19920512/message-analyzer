@@ -6,12 +6,7 @@ import type { OcrResponse } from '@/types/analysis';
 // レートリミッター: 10リクエスト/分/IP
 const limiter = createRateLimiter(10, 60 * 1000);
 
-// 許可するMIMEタイプ
-const ALLOWED_TYPES = new Set([
-  'image/png',
-  'image/jpeg',
-  'image/webp',
-]);
+// 許可するMIMEタイプ（image/* 全般を受け入れ — スマホの HEIC/HEIF/AVIF 対応）
 
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -93,13 +88,13 @@ export async function POST(
     const imageContents: { base64: string; mediaType: string }[] = [];
 
     for (const file of files) {
-      if (!ALLOWED_TYPES.has(file.type)) {
+      if (!file.type.startsWith('image/')) {
         return NextResponse.json(
           {
             success: false,
             error: {
               code: 'INVALID_TYPE',
-              message: `対応形式: PNG, JPG, WEBP（${file.name} は非対応です）`,
+              message: `画像ファイルのみ対応しています（${file.name} は非対応です）`,
             },
           },
           { status: 400 }
@@ -122,7 +117,8 @@ export async function POST(
       // base64エンコード（ファイル保存しない）
       const buffer = Buffer.from(await file.arrayBuffer());
       const base64 = buffer.toString('base64');
-      imageContents.push({ base64, mediaType: file.type });
+      const mediaType = file.type || 'image/jpeg';
+      imageContents.push({ base64, mediaType });
     }
 
     // 4. OpenAI Vision APIを呼び出し
