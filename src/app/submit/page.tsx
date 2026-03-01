@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { ProfileForm } from '@/components/analyze/ProfileForm';
 import { AnalyzeFormV2 } from '@/components/analyze/AnalyzeFormV2';
 import { Skeleton } from '@/components/ui/skeleton';
+import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { getPartnerById } from '@/lib/storage';
 
 function SubmitContent() {
@@ -25,17 +26,20 @@ function SubmitContent() {
 
 export default function SubmitPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="max-w-md mx-auto min-h-screen flex flex-col bg-card">
-          <div className="p-4 space-y-4">
-            <Skeleton className="h-10 w-full rounded-lg" />
-            <Skeleton className="h-96 rounded-lg" />
+    <>
+      <Suspense
+        fallback={
+          <div className="max-w-md mx-auto min-h-screen flex flex-col bg-card">
+            <div className="p-4 space-y-4">
+              <Skeleton className="h-10 w-full rounded-lg" />
+              <Skeleton className="h-96 rounded-lg" />
+            </div>
           </div>
-        </div>
-      }
-    >
-      <SubmitContent />
-    </Suspense>
+        }
+      >
+        <SubmitContent />
+      </Suspense>
+      <BottomNavigation />
+    </>
   );
 }
