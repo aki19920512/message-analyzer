@@ -9,6 +9,7 @@ interface OcrDropZoneProps {
   isProcessing: boolean;
   ocrText?: string;
   onUseText?: () => void;
+  onDebugLog?: (msg: string) => void;
 }
 
 const MAX_FILES = 10;
@@ -19,6 +20,7 @@ export function OcrDropZone({
   isProcessing,
   ocrText,
   onUseText,
+  onDebugLog,
 }: OcrDropZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -26,9 +28,11 @@ export function OcrDropZone({
 
   const validateFiles = (files: File[]): File[] => {
     setError(null);
+    onDebugLog?.(`validateFiles: ${files.length} files received`);
     const valid: File[] = [];
 
     for (const file of files) {
+      onDebugLog?.(`  file: ${file.name} type=${file.type} size=${file.size}`);
       if (!file.type.startsWith('image/')) {
         setError('画像ファイルのみ対応しています');
         continue;
@@ -40,6 +44,8 @@ export function OcrDropZone({
       valid.push(file);
     }
 
+    onDebugLog?.(`validateFiles: ${valid.length}/${files.length} valid`);
+
     if (valid.length > MAX_FILES) {
       setError(`最大${MAX_FILES}枚まで選択できます`);
       return valid.slice(0, MAX_FILES);
@@ -49,6 +55,7 @@ export function OcrDropZone({
   };
 
   const handleClick = () => {
+    onDebugLog?.('handleClick fired');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -57,8 +64,10 @@ export function OcrDropZone({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    onDebugLog?.(`handleFileChange: ${files.length} files from input`);
     const valid = validateFiles(files);
     if (valid.length > 0) {
+      onDebugLog?.(`handleFileChange: calling onFilesSelected with ${valid.length} files`);
       onFilesSelected(valid);
     }
     e.target.value = '';
@@ -78,6 +87,7 @@ export function OcrDropZone({
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
+    onDebugLog?.(`handleDrop: ${files.length} files dropped`);
     const valid = validateFiles(files);
     if (valid.length > 0) {
       onFilesSelected(valid);

@@ -56,6 +56,13 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
   // AbortController for cancellation
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // デバッグログ（一時的）
+  const [debugLog, setDebugLog] = useState<string[]>([]);
+  const addDebugLog = (msg: string) => {
+    const ts = new Date().toLocaleTimeString('ja-JP', { hour12: false, fractionalSecondDigits: 3 });
+    setDebugLog((prev) => [...prev, `[${ts}] ${msg}`]);
+  };
+
   // 現在のステップを計算
   const currentStep = selectedPartnerId ? 2 : 1;
 
@@ -89,6 +96,9 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
 
   // OCRファイル処理
   const handleOcrFiles = async (files: File[]) => {
+    addDebugLog(`handleOcrFiles called: ${files.length} files`);
+    files.forEach((f, i) => addDebugLog(`  [${i}] ${f.name} type=${f.type} size=${f.size}`));
+
     // 前回のリクエストが残っていればキャンセル
     ocrAbortRef.current?.abort();
     const controller = new AbortController();
@@ -103,30 +113,39 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
         formData.append('images', file);
       });
 
+      addDebugLog('OCR fetch start');
       const response = await fetch('/api/ocr', {
         method: 'POST',
         body: formData,
         signal: controller.signal,
       });
 
+      addDebugLog(`OCR response: status=${response.status} ok=${response.ok}`);
       const json = await response.json();
+      addDebugLog(`OCR json: success=${json.success} hasText=${!!json.data?.text} textPreview=${json.data?.text?.slice(0, 50) ?? 'null'}`);
 
       if (!json.success || !json.data?.text) {
         throw new Error(json.error?.message || 'OCR処理に失敗しました');
       }
 
       setOcrText(json.data.text);
+      addDebugLog('OCR text set successfully');
 
       if (json.data.warnings?.length > 0) {
         toast.warning(json.data.warnings[0]);
       }
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return;
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        addDebugLog('OCR aborted');
+        return;
+      }
       const message = err instanceof Error ? err.message : 'OCR処理に失敗しました';
+      addDebugLog(`OCR error: ${message}`);
       toast.error(message);
     } finally {
       if (!controller.signal.aborted) {
         setOcrProcessing(false);
+        addDebugLog('OCR processing set to false');
       }
     }
   };
@@ -399,6 +418,19 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-8 pb-24">
+        {/* Debug Panel（一時的） */}
+        {debugLog.length > 0 && (
+          <div className="rounded-lg bg-yellow-100 border border-yellow-400 p-3 text-xs font-mono max-h-48 overflow-y-auto">
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-bold text-yellow-800">Debug Log</span>
+              <button onClick={() => setDebugLog([])} className="text-yellow-600 underline text-[10px]">clear</button>
+            </div>
+            {debugLog.map((line, i) => (
+              <div key={i} className="text-yellow-900 leading-tight">{line}</div>
+            ))}
+          </div>
+        )}
+
         {/* Step Indicators */}
         <StepIndicator currentStep={currentStep} totalSteps={4} />
 
@@ -434,6 +466,7 @@ export function AnalyzeFormV2({ partnerId }: AnalyzeFormV2Props) {
             isProcessing={ocrProcessing}
             ocrText={ocrText}
             onUseText={handleUseOcrText}
+            onDebugLog={addDebugLog}
           />
         </section>
 
