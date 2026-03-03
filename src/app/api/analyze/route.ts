@@ -12,7 +12,7 @@ import {
 } from '@/lib/prompts';
 import { getOpenAIClient, extractOpenAIError } from '@/lib/openai';
 import type { AnalyzeResponse, AnalysisResult, RetrievedRuleCard } from '@/types/analysis';
-import { searchRuleCards, toRetrievedRuleCard, buildKbContext, buildDecodeKbHints } from '@/lib/kb/search';
+import { searchRuleCards, toRetrievedRuleCard, buildKbContext, buildDecodeKbHints, searchStrategyCards, buildStrategyContext } from '@/lib/kb/search';
 import type { SearchParams } from '@/lib/kb/search';
 import { detectDraftRisks } from '@/lib/draft-risk-detector';
 
@@ -53,6 +53,10 @@ export async function POST(
       const kbContext = buildKbContext(scoredCards);
       const decodeKbHints = buildDecodeKbHints(scoredCards);
 
+      // 戦略カード検索
+      const strategyScoredCards = searchStrategyCards(searchParams, 3);
+      const strategyContext = buildStrategyContext(strategyScoredCards);
+
       // リスク警告文生成
       let draftRiskWarnings = '';
       if (draftRisks.length > 0) {
@@ -63,7 +67,7 @@ export async function POST(
       // プロンプト組み立て（KB情報は関数内部で適切な位置に配置）
       systemPrompt = buildAnalysisPromptV2(
         goal, tone, partnerProfileText, emojiPolicy, userEmojiHints, toneControls,
-        kbContext, decodeKbHints, draftRiskWarnings
+        kbContext, decodeKbHints, draftRiskWarnings, strategyContext
       );
       userContent = `【直近の会話】\n${recentLog}\n\n【送信予定文】\n${draft}`;
     } else {

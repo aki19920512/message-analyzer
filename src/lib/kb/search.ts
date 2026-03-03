@@ -3,13 +3,17 @@
  * タグベースのスコアリングと重複排除を行う
  */
 
-import type { RuleCard, ScoredRuleCard, RetrievedRuleCard } from './types';
-import { loadRuleCards } from './load.server';
+import type { RuleCard, ScoredRuleCard, RetrievedRuleCard, ScoredStrategyCard } from './types';
+import { loadRuleCards, loadStrategyCards } from './load.server';
 
 export interface SearchParams {
   riskTags?: string[];
   goalTags?: string[];
   sceneTags?: string[];
+  // 戦略カード用
+  phaseTags?: string[];
+  situationTags?: string[];
+  partnerStateTags?: string[];
 }
 
 /**
@@ -136,4 +140,75 @@ export function buildDecodeKbHints(cards: ScoredRuleCard[]): string {
     .join('\n');
 
   return `\n\n## Decodeヒント（以下のKB知見を参考にheadline/avoid/nextを生成）\n${hints}`;
+}
+
+// ========== 戦略カード検索 ==========
+
+const STRATEGY_WEIGHTS = {
+  partnerState: 3,
+  phase: 2,
+  situation: 2,
+};
+
+/**
+ * 戦略カードを検索し、スコア順にソートして返す
+ */
+export function searchStrategyCards(
+  params: SearchParams,
+  limit = 3
+): ScoredStrategyCard[] {
+  const cards = loadStrategyCards();
+  if (cards.length === 0) return [];
+
+  const scored: ScoredStrategyCard[] = cards.map((card) => {
+    let score = 0;
+    const matchedTags: string[] = [];
+
+    params.partnerStateTags?.forEach((tag) => {
+      if (card.partner_state_tags.includes(tag)) {
+        score += STRATEGY_WEIGHTS.partnerState;
+        matchedTags.push(`partnerState:${tag}`);
+      }
+    });
+
+    params.phaseTags?.forEach((tag) => {
+      if (card.phase_tags.includes(tag)) {
+        score += STRATEGY_WEIGHTS.phase;
+        matchedTags.push(`phase:${tag}`);
+      }
+    });
+
+    params.situationTags?.forEach((tag) => {
+      if (card.situation_tags.includes(tag)) {
+        score += STRATEGY_WEIGHTS.situation;
+        matchedTags.push(`situation:${tag}`);
+      }
+    });
+
+    return { card, score, matchedTags };
+  });
+
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .filter((item, index, arr) => {
+      const key = item.card.strategy;
+      return arr.findIndex((x) => x.card.strategy === key) === index;
+    })
+    .slice(0, limit);
+}
+
+/**
+ * プロンプトに注入するための戦略コンテキストを生成
+ */
+export function buildStrategyContext(cards: ScoredStrategyCard[]): string {
+  if (cards.length === 0) return '';
+
+  const entries = cards
+    .map((s) => {
+      return `- 状況: ${s.card.situation_tags.join('、')}\n  戦略: ${s.card.strategy}\n  理由: ${s.card.why_effective}\n  タイミング: ${s.card.timing}\n  避けるべきこと: ${s.card.avoid}`;
+    })
+    .join('\n');
+
+  return `\n\n## 参考戦略（KBマッチ）\n${entries}`;
 }

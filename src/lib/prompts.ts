@@ -289,7 +289,8 @@ export function buildAnalysisPromptV2(
   toneControls?: { distanceLevel: number; lightnessLevel: number },
   kbContext?: string,
   decodeKbHints?: string,
-  draftRiskWarnings?: string
+  draftRiskWarnings?: string,
+  strategyContext?: string
 ): string {
   // 絵文字ポリシーセクションを動的に生成
   let emojiInstruction = '';
@@ -461,7 +462,7 @@ pressureRiskは具体的な引用必須。
 
 トーン: 友達に相談された時の返し。優しいけどちゃんと本音を言う。
 「お疲れ様です」「素晴らしいですね」のような他人行儀な言葉は使わない。
-${kbContext || ''}${decodeKbHints || ''}${draftRiskWarnings || ''}
+${kbContext || ''}${strategyContext || ''}${decodeKbHints || ''}${draftRiskWarnings || ''}
 
 ### 8. Decode（次の一手カード）
 全コンテキスト（プロファイル・直近ログ・下書き・スコア・改善案）を踏まえた結論。改善提案と矛盾しないこと。

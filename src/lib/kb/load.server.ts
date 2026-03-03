@@ -7,12 +7,14 @@ import 'server-only';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import type { RuleCard } from './types';
+import type { RuleCard, StrategyCard } from './types';
 
 // globalThis にキャッシュを保持（HMRでも維持）
 declare global {
   // eslint-disable-next-line no-var
   var __kbCache: RuleCard[] | undefined;
+  // eslint-disable-next-line no-var
+  var __strategyKbCache: StrategyCard[] | undefined;
 }
 
 /**
@@ -67,4 +69,54 @@ export function loadRuleCards(): RuleCard[] {
  */
 export function clearKbCache(): void {
   globalThis.__kbCache = undefined;
+}
+
+/**
+ * strategy_cards.jsonl を読み込み、StrategyCard配列を返す
+ */
+export function loadStrategyCards(): StrategyCard[] {
+  if (globalThis.__strategyKbCache) {
+    return globalThis.__strategyKbCache;
+  }
+
+  const filePath = path.join(process.cwd(), 'data', 'strategy_cards.jsonl');
+
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const lines = content.split('\n').filter((line) => line.trim());
+    if (lines.length === 0) {
+      globalThis.__strategyKbCache = [];
+      return [];
+    }
+
+    const cards: StrategyCard[] = [];
+    let skippedCount = 0;
+
+    for (const line of lines) {
+      try {
+        const card = JSON.parse(line) as StrategyCard;
+        cards.push(card);
+      } catch {
+        skippedCount++;
+      }
+    }
+
+    if (skippedCount > 0) {
+      console.warn(`[KB] Skipped ${skippedCount} malformed strategy line(s)`);
+    }
+    if (cards.length > 0) {
+      console.log(`[KB] Loaded ${cards.length} strategy cards`);
+    }
+
+    globalThis.__strategyKbCache = cards;
+    return cards;
+  } catch {
+    // ファイル不在時は空配列（graceful degradation）
+    globalThis.__strategyKbCache = [];
+    return [];
+  }
+}
+
+export function clearStrategyKbCache(): void {
+  globalThis.__strategyKbCache = undefined;
 }

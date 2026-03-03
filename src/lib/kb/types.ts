@@ -50,3 +50,22 @@ export interface RetrievedRuleCard {
   matchedTags: string[];
   score: number;
 }
+
+// ========== 戦略カード ==========
+
+export interface StrategyCard {
+  id: string;
+  phase_tags: string[];
+  situation_tags: string[];
+  partner_state_tags: string[];
+  strategy: string;
+  why_effective: string;
+  timing: string;
+  avoid: string;
+}
+
+export interface ScoredStrategyCard {
+  card: StrategyCard;
+  score: number;
+  matchedTags: string[];
+}
